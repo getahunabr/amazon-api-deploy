@@ -15,7 +15,8 @@ app.get("/", (req, res) => {
   });
 });
 app.post("/payment/create", async (req, res) => {
-  const total = parseInt(req.query.total);
+ try{
+   const total = parseInt(req.query.total);
 
   if (total > 0) {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -27,6 +28,12 @@ app.post("/payment/create", async (req, res) => {
     res.status(201).json({ client_secret: paymentIntent.client_secret });
   } else {
     res.status(403).json({ message: "total must be greater than 0" });
+  }}catch(err){
+   console.log(err);
+   res.status(500).json({
+     message: "Something went wrong. Please try again",
+     error: {err}
+   })
   }
 });
 
